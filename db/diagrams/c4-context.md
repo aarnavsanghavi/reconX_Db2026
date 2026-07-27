@@ -1,4 +1,3 @@
-```mermaid
 C4Context
     title C4 Context — ReconX Enterprise Trade Reconciliation Platform
 
@@ -27,4 +26,3 @@ C4Context
     Rel(reconx, emailGateway, "Sends break notifications", "SMTP")
     Rel(reconx, ssoIdP, "Validates user", "OIDC, HTTPS")
     Rel(grafana, reconx, "Scrapes /actuator/prometheus", "HTTPS")
-```
