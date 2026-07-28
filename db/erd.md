@@ -1,14 +1,11 @@
-# TICKET-ADV006 — ER model (8 entities)
-
-```mermaid
 erDiagram
-    COUNTERPARTIES ||--o{ TRADES : "executes"
-    INSTRUMENTS    ||--o{ TRADES : "covers"
-    TRADES         ||--o{ SETTLEMENTS : "settles via"
-    TRADES         ||--o{ RECON_BREAKS : "may produce"
-    RECON_JOBS     ||--o{ RECON_BREAKS : "detected by"
-    USERS          ||--o{ AUDIT_LOG : "actor"
-    TRADES         ||--o{ AUDIT_LOG : "audited"
+COUNTERPARTIES ||--o{ TRADES : "executes"
+INSTRUMENTS    ||--o{ TRADES : "covers"
+TRADES         ||--o{ SETTLEMENTS : "settles via"
+TRADES         ||--o{ RECON_BREAKS : "may produce"
+RECON_JOBS     ||--o{ RECON_BREAKS : "detected by"
+USERS          ||--o{ AUDIT_LOG : "actor"
+TRADES         ||--o{ AUDIT_LOG : "audited"
 
     COUNTERPARTIES {
         bigint id PK
@@ -24,7 +21,7 @@ erDiagram
         varchar asset_class
         char currency
         char isin UK
-        jsonb metadata "ADV009"
+        jsonb metadata
     }
 
     TRADES {
@@ -36,9 +33,9 @@ erDiagram
         varchar side
         numeric quantity
         numeric price
-        date trade_date "PARTITION KEY (ADV007)"
+        date trade_date
         varchar status
-        timestamp deleted_at "ADV067 soft delete"
+        timestamp deleted_at
         timestamp created_at
         timestamp modified_at
     }
@@ -92,4 +89,3 @@ erDiagram
         boolean enabled
         timestamp created_at
     }
-```

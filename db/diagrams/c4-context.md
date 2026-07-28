@@ -28,3 +28,4 @@ C4Context
     Rel(reconx, ssoIdP, "Validates user", "OIDC, HTTPS")
     Rel(grafana, reconx, "Scrapes /actuator/prometheus", "HTTPS")
 ```
+    
