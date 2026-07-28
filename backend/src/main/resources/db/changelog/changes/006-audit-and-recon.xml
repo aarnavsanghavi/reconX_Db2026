@@ -80,8 +80,8 @@
             <not><foreignKeyConstraintExists foreignKeyName="fk_recon_breaks_trade"/></not>
         </preConditions>
         <addForeignKeyConstraint baseTableName="recon_breaks" baseColumnNames="trade_id"
-                                 constraintName="fk_recon_breaks_trade"
-                                 referencedTableName="trades" referencedColumnNames="id"/>
+                                  constraintName="fk_recon_breaks_trade"
+                                  referencedTableName="trades" referencedColumnNames="id"/>
         <rollback>
             <dropForeignKeyConstraint baseTableName="recon_breaks"
                                       constraintName="fk_recon_breaks_trade"/>
