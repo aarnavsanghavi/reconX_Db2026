@@ -63,6 +63,10 @@ public class SecurityConfig {
 
 
     @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         // ====================================================================
@@ -77,11 +81,6 @@ public class SecurityConfig {
                 .headers(h -> h.frameOptions(f -> f.disable())) // allow /h2 in dev
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
                 .build();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 
     // TODO(TICKET-ADV073): register JwtAuthenticationFilter before
