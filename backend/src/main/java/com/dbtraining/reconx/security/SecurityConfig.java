@@ -83,11 +83,6 @@ public class SecurityConfig {
                 .build();
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
     // TODO(TICKET-ADV073): register JwtAuthenticationFilter before
     //                     UsernamePasswordAuthenticationFilter.
     // TODO(TICKET-ADV074): add @EnableMethodSecurity and the RBAC matchers.
