@@ -61,16 +61,21 @@ public final class DerivativeTrade implements TradeType {
 
     @Override public boolean equals(Object o) {
         // TODO(TICKET-ADV028): pattern-match on DerivativeTrade and compare tradeRef.
-        throw new UnsupportedOperationException("TICKET-ADV028");
+        //throw new UnsupportedOperationException("TICKET-ADV028");
+        return (o instanceof DerivativeTrade other) && tradeRef.equals(other.tradeRef);
     }
     @Override public int hashCode() {
         // TODO(TICKET-ADV028): hash from tradeRef.
-        throw new UnsupportedOperationException("TICKET-ADV028");
+        //throw new UnsupportedOperationException("TICKET-ADV028");
+        return tradeRef.hashCode();
     }
 
     @Override public String toString() {
         // TODO(TICKET-ADV030): "DerivativeTrade[ref=..., TYPE UNDERLYING on date, strike=... CCY, qty=..., expiry=..., side=...]"
-        throw new UnsupportedOperationException("TICKET-ADV030");
+        //throw new UnsupportedOperationException("TICKET-ADV030");
+         return "DerivativeTrade[ref=%s, %s %s on %s, strike=%s %s, qty=%s, expiry=%s, side=%s]"
+            .formatted(tradeRef, optionType, underlying, tradeDate, strike,
+                       currency.getCurrencyCode(), quantity, expiry, side);
     }
 
     public static final class Builder {
