@@ -55,6 +55,19 @@ public class ReconciliationEngine {
                 .map(in -> matchOne(in, externalByRef.get(in.tradeRef().value()), rule))
                 .toList();
     }
+//     public List<ReconResult> reconcile(List<TradeType> internal,
+//                                    List<TradeType> external,
+//                                    ReconciliationRule rule) {
+//     if (internal == null || internal.isEmpty()) return List.of();
+
+//     Map<String, TradeType> externalByRef = (external == null ? List.<TradeType>of() : external)
+//             .stream()
+//             .collect(Collectors.toMap(t -> t.tradeRef().value(), Function.identity(), (a, b) -> a));
+
+//     return internal.parallelStream()
+//             .map(in -> matchOne(in, externalByRef.get(in.tradeRef().value()), rule))
+//             .toList();
+// }
 
     /**
      * TICKET-ADV037 — split by counterparty, reconcile each batch concurrently,
