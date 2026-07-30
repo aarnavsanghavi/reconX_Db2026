@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
+
 
 /**
  * ============================================================================
@@ -46,6 +46,21 @@ public class TradeController {
         this.mapper = mapper;
     }
 
+    /**
+     * TICKET-ADV057 — Paginated, filterable, sortable trade list.
+     *
+     * Delegates to TradeService.list() which composes TradeSpecifications
+     * and calls tradeRepository.findAll(spec, pageable). The Page<Trade>
+     * result is projected into PagedResponse<TradeResponse> via the
+     * MapStruct-generated mapper bean, keeping JPA entities off the wire.
+     *
+     * Query params:
+     *   from / to         — tradeDate range (ISO date, both optional)
+     *   status            — exact-match status filter (optional)
+     *   counterpartyId    — FK filter (optional)
+     *   page / size / sort — standard Pageable params; defaults: size=20,
+     *                        sort=tradeDate DESC
+     */
     @GetMapping
     @Operation(summary = "List trades — paginated, filterable, sortable")
     public PagedResponse<TradeResponse> list(
@@ -54,11 +69,8 @@ public class TradeController {
             @RequestParam(required = false) String status,
             @RequestParam(required = false) Long counterpartyId,
             @PageableDefault(size = 20, sort = "tradeDate", direction = Sort.Direction.DESC) Pageable pageable) {
-        // TODO(TICKET-ADV063): delegate to service.list(from, to, status, counterpartyId, pageable)
-        //   and wrap the resulting Page<Trade> via PagedResponse.from(page, mapper::toResponse).
-        //   For Day 1 return an empty PagedResponse so the React grid renders
-        //   "no trades match" while the JPA + Specifications work is still pending.
-        return new PagedResponse<>(List.of(), 0, 20, 0, 0);
+        var page = service.list(from, to, status, counterpartyId, pageable);
+        return PagedResponse.of(page, mapper::toResponse);
     }
 
     @PostMapping

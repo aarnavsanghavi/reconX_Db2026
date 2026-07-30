@@ -1,0 +1,61 @@
+package com.dbtraining.reconx.service;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+ import java.math.BigDecimal;
+ import com.dbtraining.reconx.repository.entity.Trade;
+import java.time.LocalDate;
+import java.util.List;
+import com.dbtraining.reconx.dto.ReconResult;
+@SpringBootTest
+@Testcontainers
+class ReconciliationIntegrationTest {
+    
+    @Container
+    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
+            .withDatabaseName("reconx")
+            .    withUsername("test")
+            .withPassword("test");
+
+    @DynamicPropertySource
+    static void props(DynamicPropertyRegistry r) {
+        r.add("spring.datasource.url", postgres::getJdbcUrl);
+        r.add("spring.datasource.username", postgres::getUsername);
+        r.add("spring.datasource.password", postgres::getPassword);
+    }
+
+    @Test
+    void containerIsRunning() {
+        // sanity: if this passes, all your wiring is correct.
+        // The real assertions live in TICKET-ADV045.
+    }
+    
+
+  //   @Test
+// void insertedTradesAreReconciledAndPersisted() {
+     // given — two matching trades, one in each repo
+  //   Trade internal = new Trade("TRD-INT-1", "CP-1", "SAP.DE",
+    //         new BigDecimal("100"), new BigDecimal("245.50"), LocalDate.now());
+     //Trade external = new Trade("TRD-INT-1", "CP-1", "SAP.DE",
+       //      new BigDecimal("100"), new BigDecimal("245.50"), LocalDate.now());
+
+ //    internalTradeRepo.save(internal);
+   //  externalTradeRepo.save(external);
+
+    // when
+    //reconciliationService.runRecon(
+      //      internalTradeRepo.findAll(),
+        //     externalTradeRepo.findAll());
+
+     // then — exactly one MATCHED row landed in recon_results
+   //  List<ReconResult> persisted = reconResultRepo.findAll();
+    // assertThat(persisted).hasSize(1);
+     //assertThat(persisted.get(0).status()).isEqualTo(ReconResult.Status.MATCHED);
+     //assertThat(persisted.get(0).tradeRef()).isEqualTo("TRD-INT-1");
+ //}
+}
