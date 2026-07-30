@@ -46,6 +46,8 @@ public class AuthController {
         if (!u.getEnabled() || !encoder.matches(req.password(), u.getPasswordHash())) {
             throw new InvalidTradeException("Invalid credentials");
         }
+        
+        //String token = jwt.generate(u.getEmail(), u.getRole().replace("ROLE_",""));
         String token = jwt.generate(u.getEmail(), u.getRole());
         return ResponseEntity.ok(new LoginResponse(token, "Bearer", jwt.expirationSeconds(), u.getRole()));
     }
