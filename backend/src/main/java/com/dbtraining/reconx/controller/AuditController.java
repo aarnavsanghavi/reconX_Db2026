@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -24,20 +23,23 @@ public class AuditController {
 
     public AuditController(AuditLogRepository auditRepo) { this.auditRepo = auditRepo; }
 
+    // -------------------------------------------------------------------------
+    // TICKET-ADV071 — GET /api/v1/audit/trades/{tradeRef}
+    // -------------------------------------------------------------------------
     @GetMapping("/trades/{tradeRef}")
     @Operation(summary = "Get audit history for a trade (by tradeRef)")
     public List<AuditLogEntry> history(@PathVariable String tradeRef) {
-        // TODO(TICKET-ADV071): return auditRepo.findByTradeRefOrderByEventTimestampAsc(tradeRef).
-        //   Day-0 returns an empty list so the React audit-trail panel renders
-        //   "no history yet" instead of erroring.
-        return Collections.emptyList();
+        // Return all audit log entries for the given tradeRef, oldest-first.
+        return auditRepo.findByTradeRefOrderByEventTimestampAsc(tradeRef);
     }
 
+    // -------------------------------------------------------------------------
+    // TICKET-ADV138 — GET /api/v1/audit/trades/{tradeRef}/events (Kafka events)
+    // -------------------------------------------------------------------------
     @GetMapping("/trades/{tradeRef}/events")
     @Operation(summary = "Stream of all Kafka-sourced events for a trade")
     public List<AuditLogEntry> events(@PathVariable String tradeRef) {
-        // TODO(TICKET-ADV138): once the audit-log Kafka consumer is in place,
-        //   return auditRepo.findByTradeRefOrderByEventTimestampAsc(tradeRef).
-        return Collections.emptyList();
+        // Reuses the same audit log table; Kafka consumer populates it in Day 6.
+        return auditRepo.findByTradeRefOrderByEventTimestampAsc(tradeRef);
     }
 }
