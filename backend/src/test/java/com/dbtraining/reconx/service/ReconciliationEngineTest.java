@@ -57,11 +57,6 @@ class ReconciliationEngineTest {
         List<ReconResult> results = engine.reconcile(List.of(), List.of(), ReconciliationRule.EXACT);
         assertThat(results).isEmpty();
     }
-     @Test
- void testReconcile_emptyInternal_returnsEmpty() {
-     assertThat(engine.reconcile(List.of(), List.of(), ReconciliationRule.EXACT)).isEmpty();
- }
-    // single internal trade with no external feed -> one BREAK with MISSING_EXTERNAL
 
     private EquityTrade equity(String ref, String price, String qty) {
         return EquityTrade.builder()
