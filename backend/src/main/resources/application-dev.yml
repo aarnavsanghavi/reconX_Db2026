@@ -52,6 +52,9 @@ spring:
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update #changed to update for creation of audit tables change back to validate in case of build failures later on
+
 
   liquibase:
     enabled: true
