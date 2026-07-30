@@ -29,11 +29,17 @@ public final class TradeFactory {
     public static TradeType create(String assetClass, Map<String, Object> p) {
         TradeType.AssetClass ac = TradeType.AssetClass.valueOf(assetClass.toUpperCase());
         return switch (ac) {
-            case EQUITY                  -> equity(p);
-            case FX                      -> fx(p);
-            case BOND, FIXED_INCOME      -> bond(p);   // FIXED_INCOME uses bond structure
-            case DERIVATIVE              -> derivative(p);
-            case COMMODITY               -> equity(p); // COMMODITY treated as equity-like until CommodityTrade is added
+            case EQUITY      -> equity(p);
+            case FX          -> fx(p);
+            case BOND        -> bond(p);
+            case DERIVATIVE  -> derivative(p);
+            // FIXED_INCOME and COMMODITY enum values were added in develop (ticket-62)
+            // but concrete TradeType implementations are not yet available.
+            // Throw here to keep the switch exhaustive; implement when the types are added.
+            case FIXED_INCOME -> throw new UnsupportedOperationException(
+                    "FIXED_INCOME trade type is not yet implemented");
+            case COMMODITY    -> throw new UnsupportedOperationException(
+                    "COMMODITY trade type is not yet implemented");
         };
     }
 

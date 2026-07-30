@@ -116,15 +116,13 @@ public class TradeService {
     }
 
     public void softDelete(Long id, String actor) {
-        var t = tradeRepo.findById(id)
-                .orElseThrow(() -> new TradeNotFoundException("id " + id));
-        t.softDelete();
-        tradeRepo.save(t);
-
-        events.publish(new TradeEvent(UUID.randomUUID(), t.getTradeRef(),
-                TradeEvent.EventType.TRADE_CANCELLED, Instant.now(), actor,
-                "deleted_at=null", "deleted_at=" + t.getDeletedAt()));
-    }
+    Trade t = tradeRepo.findById(id)
+            .orElseThrow(() -> new TradeNotFoundException("id=" + id));
+    t.softDelete();
+    tradeRepo.save(t);
+    events.publish(new TradeEvent(UUID.randomUUID(), t.getTradeRef(),
+            TradeEvent.EventType.TRADE_CANCELLED, Instant.now(), actor, null, null));
+}
 
     @Transactional(readOnly = true)
     public Page<Trade> list(LocalDate from, LocalDate to, String status, Long counterpartyId, Pageable pageable) {
