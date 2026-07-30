@@ -29,11 +29,10 @@ public final class TradeFactory {
     public static TradeType create(String assetClass, Map<String, Object> p) {
         TradeType.AssetClass ac = TradeType.AssetClass.valueOf(assetClass.toUpperCase());
         return switch (ac) {
-            case EQUITY                  -> equity(p);
-            case FX                      -> fx(p);
-            case BOND, FIXED_INCOME      -> bond(p);   // FIXED_INCOME uses bond structure
-            case DERIVATIVE              -> derivative(p);
-            case COMMODITY               -> equity(p); // COMMODITY treated as equity-like until CommodityTrade is added
+            case EQUITY     -> equity(p);
+            case FX         -> fx(p);
+            case BOND       -> bond(p);
+            case DERIVATIVE -> derivative(p);
         };
     }
 
