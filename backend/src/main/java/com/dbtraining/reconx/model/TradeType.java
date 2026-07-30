@@ -53,5 +53,5 @@ public sealed interface TradeType
         return NATURAL.compare(this, other);
     }
 
-    enum AssetClass { EQUITY, FX, BOND, DERIVATIVE }
+    enum AssetClass { EQUITY, FX, BOND, FIXED_INCOME, COMMODITY, DERIVATIVE }
 }

@@ -40,6 +40,13 @@ public class AuthController {
         //   then call jwt.generate(email, role) and return a LoginResponse.
         //   Reject with InvalidTradeException("Invalid credentials") on any mismatch
         //   (do NOT leak whether the email or the password was the problem).
-        throw new UnsupportedOperationException("TICKET-ADV072");
+        //throw new UnsupportedOperationException("TICKET-ADV072");
+        AppUser u = users.findByEmail(req.email())
+                .orElseThrow(() -> new InvalidTradeException("Invalid credentials"));
+        if (!u.getEnabled() || !encoder.matches(req.password(), u.getPasswordHash())) {
+            throw new InvalidTradeException("Invalid credentials");
+        }
+        String token = jwt.generate(u.getEmail(), u.getRole());
+        return ResponseEntity.ok(new LoginResponse(token, "Bearer", jwt.expirationSeconds(), u.getRole()));
     }
 }
