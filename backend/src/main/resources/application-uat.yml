@@ -11,6 +11,10 @@ spring:
       maximum-pool-size: 20
       connection-timeout: 5000
   jpa:
+    hibernate:
+      ddl-auto: update #changed to update for creation of audit tables change back to validate in case of build failures later on
+
+
     properties:
       hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
       hibernate.jdbc.batch_size: 50
