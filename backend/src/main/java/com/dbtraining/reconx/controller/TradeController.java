@@ -10,18 +10,18 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
+import jakarta.servlet.http.HttpServletResponse;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.Map;
-
+import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 
 /**
  * ============================================================================
@@ -49,11 +49,6 @@ public class TradeController {
     /**
      * TICKET-ADV057 — Paginated, filterable, sortable trade list.
      *
-     * Delegates to TradeService.list() which composes TradeSpecifications
-     * and calls tradeRepository.findAll(spec, pageable). The Page<Trade>
-     * result is projected into PagedResponse<TradeResponse> via the
-     * MapStruct-generated mapper bean, keeping JPA entities off the wire.
-     *
      * Query params:
      *   from / to         — tradeDate range (ISO date, both optional)
      *   status            — exact-match status filter (optional)
@@ -68,52 +63,79 @@ public class TradeController {
             @RequestParam(required = false) LocalDate to,
             @RequestParam(required = false) String status,
             @RequestParam(required = false) Long counterpartyId,
-            @PageableDefault(size = 20, sort = "tradeDate", direction = Sort.Direction.DESC) Pageable pageable) {
-
-        // TODO(TICKET-ADV063): delegate to service.list(from, to, status, counterpartyId, pageable)
-        //   and wrap the resulting Page<Trade> via PagedResponse.from(page, mapper::toResponse).
-        //   For Day 1 return an empty PagedResponse so the React grid renders
-        //   "no trades match" while the JPA + Specifications work is still pending.
+            @PageableDefault(
+                    size = 20,
+                    sort = "tradeDate",
+                    direction = Sort.Direction.DESC
+            ) Pageable pageable) {
 
         var page = service.list(from, to, status, counterpartyId, pageable);
         return PagedResponse.of(page, mapper::toResponse);
-
     }
 
     @PostMapping
     @Operation(summary = "Create a trade")
-    public ResponseEntity<TradeResponse> create(@Valid @RequestBody TradeRequest req,
-                                                @AuthenticationPrincipal Object principal) {
-        // TODO(TICKET-ADV064): call service.create(req, actor), build a Location
-        //   header at /api/v1/trades/{id}, and return 201 Created with the
-        //   mapped TradeResponse body.
-        throw new UnsupportedOperationException("TICKET-ADV064");
+    public ResponseEntity<TradeResponse> create(
+            @Valid @RequestBody TradeRequest req,
+            @AuthenticationPrincipal Object principal) {
+
+        String actor = String.valueOf(principal);
+        Trade saved = service.create(req, actor);
+
+        return ResponseEntity
+                .created(URI.create("/api/v1/trades/" + saved.getId()))
+                .body(mapper.toResponse(saved));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Full update of a trade")
-    public TradeResponse update(@PathVariable Long id, @Valid @RequestBody TradeRequest req,
-                                @AuthenticationPrincipal Object principal) {
-        // TODO(TICKET-ADV065): delegate to service.update(id, req, actor) and
-        //   map the updated entity through mapper.toResponse.
-        throw new UnsupportedOperationException("TICKET-ADV065");
+    public TradeResponse update(
+            @PathVariable Long id,
+            @Valid @RequestBody TradeRequest req,
+            @AuthenticationPrincipal Object principal) {
+
+        return mapper.toResponse(
+                service.update(id, req, String.valueOf(principal))
+        );
     }
 
     @PatchMapping("/{id}/status")
     @Operation(summary = "Update only the status field")
-    public TradeResponse updateStatus(@PathVariable Long id,
-                                      @RequestBody Map<String, String> body,
-                                      @AuthenticationPrincipal Object principal) {
-        // TODO(TICKET-ADV066): read body.get("status") and call
-        //   service.updateStatus(id, status, actor). Return mapper.toResponse(saved).
-        throw new UnsupportedOperationException("TICKET-ADV066");
+    public TradeResponse updateStatus(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> body,
+            @AuthenticationPrincipal Object principal) {
+
+        String status = body.get("status");
+
+        return mapper.toResponse(
+                service.updateStatus(id, status, String.valueOf(principal))
+        );
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Soft delete (sets deleted_at)")
-    public ResponseEntity<Void> delete(@PathVariable Long id,
-                                       @AuthenticationPrincipal Object principal) {
-        // TODO(TICKET-ADV067): service.softDelete(id, actor); return 204 No Content.
-        throw new UnsupportedOperationException("TICKET-ADV067");
+    public ResponseEntity<Void> delete(
+            @PathVariable Long id,
+            @AuthenticationPrincipal Object principal) {
+
+        service.softDelete(id, String.valueOf(principal));
+        return ResponseEntity.noContent().build();
     }
+
+    // Every controller carries the versioned prefix:
+
+
+// Example deprecation of an old endpoint surface area:
+@Deprecated(since = "v1.4.0", forRemoval = true)
+@GetMapping(value = "/old-search", produces = MediaType.APPLICATION_JSON_VALUE)
+public ResponseEntity<Void> oldSearch(HttpServletResponse response) {
+    System.out.println("old search called");
+    response.setHeader("Deprecation", "true");
+    response.setHeader("Sunset", "Sat, 1 Jul 2026 00:00:00 GMT");
+    response.setHeader("Link",
+            "</api/v1/trades?status=...>; rel=\"successor-version\"");
+    return ResponseEntity.status(HttpStatus.GONE).build();
 }
+}
+
