@@ -24,5 +24,5 @@ public class InstrumentService {
         return repo.findBySymbol(symbol)
                 .orElseThrow(() -> new InvalidTradeException("Unknown instrument symbol: " + symbol));
     }
-    }
+
 }
