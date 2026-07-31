@@ -51,13 +51,15 @@ services:
     networks: [reconx]
 
   backend:
-    build: ./backend
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
     image: ghcr.io/sidoncode/reconx-backend:latest
     container_name: reconx-backend
     depends_on:
       postgres: {condition: service_healthy}
       kafka:    {condition: service_healthy}
-    ports: ["8080:8080"]
+    ports: ["8081:8081"]
     environment:
       SPRING_PROFILES_ACTIVE: uat
       POSTGRES_HOST: postgres
@@ -67,8 +69,9 @@ services:
       POSTGRES_PASSWORD: reconx_pass
       KAFKA_BOOTSTRAP: kafka:29092
       JWT_SECRET: ${JWT_SECRET:-dev-secret-change-me-32-bytes-min!!}
+      SPRING_LIQUIBASE_CONTEXTS: dev
     healthcheck:
-      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8080/api/actuator/health"]
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8081/api/actuator/health"]
       interval: 10s
       timeout: 5s
       retries: 10

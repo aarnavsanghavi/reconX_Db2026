@@ -39,6 +39,12 @@ import java.util.stream.Collectors;
 @Service
 public class ReconciliationEngine {
 
+    private final com.dbtraining.reconx.observability.ReconConfigMBean config;
+
+    public ReconciliationEngine(com.dbtraining.reconx.observability.ReconConfigMBean config) {
+        this.config = config;
+    }
+
     @Timed(value = "reconciliation.duration", description = "Wall time of reconcile()",
            percentiles = {0.5, 0.95, 0.99}, histogram = true)
     public List<ReconResult> reconcile(List<TradeType> internal,
@@ -100,7 +106,17 @@ public class ReconciliationEngine {
         }
         BigDecimal[] in  = priceQty(internal);
         BigDecimal[] out = priceQty(external);
-        if (rule.matches(in[0], in[1], out[0], out[1])) {
+        
+        // Use JMX configured price tolerance (ADV096)
+        BigDecimal JmxTolerance = BigDecimal.valueOf(config.getPriceTolerance());
+        BigDecimal priceDiff = in[0].subtract(out[0]).abs();
+        BigDecimal priceDiffPct = in[0].signum() == 0 ? BigDecimal.ZERO : priceDiff.divide(in[0], 6, java.math.RoundingMode.HALF_UP);
+        BigDecimal qtyDiff = in[1].subtract(out[1]).abs();
+        
+        boolean priceOk = priceDiffPct.compareTo(JmxTolerance) <= 0;
+        boolean qtyOk = qtyDiff.compareTo(rule.qtyToleranceAbs()) <= 0;
+
+        if (priceOk && qtyOk) {
             return ReconResult.matched(ref);
         }
         return ReconResult.breakResult(ref, "VALUE_MISMATCH",
