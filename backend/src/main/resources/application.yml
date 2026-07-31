@@ -23,6 +23,7 @@ spring:
   liquibase:
     change-log: classpath:/db/changelog/db.changelog-master.xml
     enabled: true
+    contexts: dev
 
   jpa:
     open-in-view: false
@@ -92,6 +93,8 @@ management:
 # TICKET-ADV072 — JWT signing config (NEVER commit a real secret; override per env)
 # =============================================================================
 reconx:
+  audit:
+    enabled: false
   security:
     jwt:
       # dev secret only — UAT/PROD MUST override via env var
