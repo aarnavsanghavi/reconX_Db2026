@@ -15,7 +15,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class ReconciliationEngineTest {
 
-    private final ReconciliationEngine engine = new ReconciliationEngine();
+    private final com.dbtraining.reconx.observability.ReconConfigMBean config = 
+        new com.dbtraining.reconx.observability.ReconConfigMBean(null);
+
+    private final ReconciliationEngine engine = new ReconciliationEngine(config);
 
     @Test
     void testReconcile_exactMatch_returnsMatched() {
