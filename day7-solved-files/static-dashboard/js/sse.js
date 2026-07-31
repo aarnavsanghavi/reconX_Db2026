@@ -4,7 +4,7 @@
   if (!feed) return;
 
   // Hardcoded demo events for the static dashboard (no backend required).
-  // Replace with: const sse = new EventSource('/api/v1/trades/stream');
+   //const sse = new EventSource('/api/v1/trades/stream');
   const demoEvents = [
     { tradeRef: 'EQU-20260603-0001', symbol: 'SAP.DE',  qty: 1000, price: 125.50, status: 'MATCHED' },
     { tradeRef: 'FX-20260603-0001',  symbol: 'EUR/USD', qty: 1_000_000, price: 1.0852, status: 'PENDING' },
