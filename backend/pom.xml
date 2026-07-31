@@ -71,7 +71,7 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Hibernate Envers (ADV052) -->
+        <!-- Hibernate Envers (ADV052) --><!--commented to run 79-->
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-envers</artifactId>
