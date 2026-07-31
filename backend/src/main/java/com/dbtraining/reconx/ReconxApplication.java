@@ -19,7 +19,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
  * </ul>
  */
 @SpringBootApplication
-@EnableJpaAuditing
 @EnableCaching
 @EnableKafka
 @EnableAsync
