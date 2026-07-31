@@ -7,10 +7,15 @@
 
 FROM eclipse-temurin:25-jdk AS build
 WORKDIR /workspace
-COPY pom.xml mvnw ./
-COPY .mvn .mvn
+
+# Copy and build local dependency first
+COPY backend/pom.xml backend/mvnw ./
+COPY backend/.mvn .mvn
+COPY recon-audit-starter ../recon-audit-starter
+RUN ./mvnw -f ../recon-audit-starter/pom.xml clean install
+
 RUN ./mvnw -q -B dependency:go-offline || true
-COPY src src
+COPY backend/src src
 RUN ./mvnw -q -B -DskipTests package && \
     mv target/reconx-*.jar app.jar
 
