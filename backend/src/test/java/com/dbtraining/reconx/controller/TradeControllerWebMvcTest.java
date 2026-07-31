@@ -26,7 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
-
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -34,6 +34,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 @WebMvcTest(TradeController.class)
 @Import(SecurityConfig.class)
@@ -144,4 +145,23 @@ class TradeControllerWebMvcTest {
                 .andExpect(jsonPath("$.id").value(42))
                 .andExpect(jsonPath("$.tradeRef").value("TRD-20260315-9999"));
     }
+
+    @Test
+    void testCreateTrade_unauthenticated_returns401() throws Exception {
+        mockMvc.perform(post("/v1/trades")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validRequest())))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser(roles = "VIEWER")
+    void testCreateTrade_viewerRole_returns403() throws Exception {
+        mockMvc.perform(post("/v1/trades")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validRequest()))
+                        .with(csrf()))
+                .andExpect(status().isForbidden());
+    }
+
 }
