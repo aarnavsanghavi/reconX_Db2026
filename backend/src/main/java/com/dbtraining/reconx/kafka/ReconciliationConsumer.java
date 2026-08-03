@@ -30,6 +30,7 @@ public class ReconciliationConsumer {
     public void onTradeEvent(TradeEvent event) {
         log.info("Recon-trigger received eventId={} ref={} type={}",
                 event.eventId(), event.tradeRef(), event.eventType());
+        System.out.println("Recon Consumer received: " + event.tradeRef());
         // Enqueue a recon job here (do NOT reconcile inline — that would block
         // the consumer thread and back up the partition).
     }

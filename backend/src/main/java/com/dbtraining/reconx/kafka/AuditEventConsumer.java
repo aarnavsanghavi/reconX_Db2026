@@ -46,5 +46,8 @@ public class AuditEventConsumer {
                 e.before(),
                 e.after()));
         log.debug("Audit row persisted for eventId={}", e.eventId());
+
+        System.out.println("Audit Consumer received: " + e.tradeRef());
+
     }
 }

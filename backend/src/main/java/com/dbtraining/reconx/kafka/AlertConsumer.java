@@ -27,6 +27,8 @@ public class AlertConsumer {
 
     @KafkaListener(topics = "system-alerts", groupId = "alert-service")
     public void onAlert(String payload) {
+
+        System.out.println("Alert Consumer received");
         log.warn("ALERT: {}", payload);
     }
 }

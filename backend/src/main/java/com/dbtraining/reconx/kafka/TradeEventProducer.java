@@ -39,6 +39,7 @@ public class TradeEventProducer {
     public void publish(TradeEvent event) {
         log.debug("Publishing TradeEvent eventId={} ref={} type={}",
                 event.eventId(), event.tradeRef(), event.eventType());
+        System.out.println("Published TradeEvent: " + event.tradeRef());
         template.send(TOPIC, event.tradeRef(), event)
                 .whenComplete((result, ex) -> {
                     if (ex != null) {
