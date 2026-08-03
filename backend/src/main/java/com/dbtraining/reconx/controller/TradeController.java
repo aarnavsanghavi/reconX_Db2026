@@ -32,6 +32,7 @@ import org.springframework.http.HttpStatus;
  * /api/v1/trades, /api/v1/trades/{id} etc.
  * ============================================================================
  */
+@CrossOrigin(origins="http://localhost:5500")
 @RestController
 @RequestMapping("/v1/trades")
 @Tag(name = "trades", description = "Trade CRUD and search")
