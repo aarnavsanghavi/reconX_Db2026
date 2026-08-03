@@ -16,10 +16,12 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
+import jakarta.servlet.http.HttpServletResponse;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.Map;
+import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 
 /**
  * ============================================================================
@@ -30,6 +32,7 @@ import java.util.Map;
  * /api/v1/trades, /api/v1/trades/{id} etc.
  * ============================================================================
  */
+@CrossOrigin(origins="http://localhost:5500")
 @RestController
 @RequestMapping("/v1/trades")
 @Tag(name = "trades", description = "Trade CRUD and search")
@@ -120,5 +123,20 @@ public class TradeController {
         service.softDelete(id, String.valueOf(principal));
         return ResponseEntity.noContent().build();
     }
+
+    // Every controller carries the versioned prefix:
+
+
+// Example deprecation of an old endpoint surface area:
+@Deprecated(since = "v1.4.0", forRemoval = true)
+@GetMapping(value = "/old-search", produces = MediaType.APPLICATION_JSON_VALUE)
+public ResponseEntity<Void> oldSearch(HttpServletResponse response) {
+    System.out.println("old search called");
+    response.setHeader("Deprecation", "true");
+    response.setHeader("Sunset", "Sat, 1 Jul 2026 00:00:00 GMT");
+    response.setHeader("Link",
+            "</api/v1/trades?status=...>; rel=\"successor-version\"");
+    return ResponseEntity.status(HttpStatus.GONE).build();
+}
 }
 
