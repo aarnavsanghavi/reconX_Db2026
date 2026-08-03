@@ -1,7 +1,7 @@
 // Compound <DataTable> with Header / Body / Pagination subcomponents.
 import React, { createContext, useContext } from 'react';
 
-const DataTableContext = createContext({ sort: null, page: 0, size: 20 });
+const DataTableContext = createContext({ sort: null, page: 0, size: 20, onSortChange: undefined });
 
 export default function DataTable({ children, sort, page = 0, size = 20, onSortChange }) {
   return (
@@ -18,6 +18,7 @@ DataTable.Header = function Header({ columns }) {
       {columns.map((c) => (
         <button
           key={c.key}
+          type="button"
           className={`data-table__th data-table__th--${sort === c.key ? 'active' : 'idle'}`}
           onClick={() => onSortChange && onSortChange(c.key)}
         >
@@ -43,9 +44,21 @@ DataTable.Body = function Body({ rows, render }) {
 DataTable.Pagination = function Pagination({ page, totalPages, onChange }) {
   return (
     <nav className="data-table__pagination" aria-label="Pagination">
-      <button disabled={page === 0} onClick={() => onChange(page - 1)}>‹</button>
+      <button
+        type="button"
+        disabled={page === 0}
+        onClick={() => onChange(page - 1)}
+      >
+        ‹
+      </button>
       <span>{page + 1} / {totalPages}</span>
-      <button disabled={page >= totalPages - 1} onClick={() => onChange(page + 1)}>›</button>
+      <button
+        type="button"
+        disabled={page >= totalPages - 1}
+        onClick={() => onChange(page + 1)}
+      >
+        ›
+      </button>
     </nav>
   );
 };
