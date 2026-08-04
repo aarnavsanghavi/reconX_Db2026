@@ -100,7 +100,11 @@ jobs:
         working-directory: backend
         run: |
           chmod +x mvnw
-          ./mvnw -B liquibase:validate || true
+          ./mvnw -B liquibase:validate \
+            -Dliquibase.changeLogFile=src/main/resources/db/changelog/db.changelog-master.xml \
+            -Dliquibase.url=jdbc:postgresql://localhost:5432/reconx \
+            -Dliquibase.username=reconx_user \
+            -Dliquibase.password=reconx_pass
 
       - name: Backend Tests
         working-directory: backend
